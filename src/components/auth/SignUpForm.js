@@ -13,7 +13,7 @@ class SignUpForm extends Component {
     console.log(`props: `, this.props);
     return (
       <div>
-        <h2>Sign Up</h2>
+        <h2>Sign Up - register account</h2>
         <form onSubmit={handleSubmit}>
           <Field name='email' component={ErrorField} />
           <Field name='password' component={ErrorField} type='password'/>

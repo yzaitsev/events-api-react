@@ -1,9 +1,8 @@
 import firebase, { appName } from '../config';
 import { Record } from 'immutable';
-import { all, take, call, put } from 'redux-saga/effects';
+import { push, replace } from 'connected-react-router';
+import { all, take, call, put, cps, takeEvery } from 'redux-saga/effects';
 
-// bad code it's temporary
-import store from '../redux/store';
 
 // Module name
 export const moduleName = 'auth';
@@ -13,6 +12,9 @@ export const SIGN_UP_REQUEST = `${appName}/${moduleName}/SIGN_UP_REQUEST`;
 export const SIGN_UP_SUCCESS = `${appName}/${moduleName}/SIGN_UP_SUCCESS`;
 export const SIGN_IN_SUCCESS = `${appName}/${moduleName}/SIGN_IN_SUCCESS`;
 export const SIGN_UP_ERROR = `${appName}/${moduleName}/SIGN_UP_ERROR`;
+export const SIGN_OUT_REQUEST = `${appName}/${moduleName}/SIGN_OUT_REQUEST`;
+export const SIGN_OUT_SUCCESS = `${appName}/${moduleName}/SIGN_OUT_SUCCESS`;
+export const SIGN_OUT_ERROR = `${appName}/${moduleName}/SIGN_OUT_ERROR`;
 
 
 const ReducerSchema = Record({
@@ -39,6 +41,12 @@ export default function reducer(state = new ReducerSchema(), action) {
       return state.set('loading', false)
                   .set('error', error)
 
+    case SIGN_OUT_SUCCESS:
+      return new ReducerSchema();
+
+    case SIGN_OUT_ERROR:
+      return new ReducerSchema();
+
     default:
       return state;
   }
@@ -53,8 +61,7 @@ export function signUp(email, password) {
 }
 
 
-
-export function* signUpSaga() {
+export const signUpSaga = function* () {
   const auth = firebase.auth();
 
   while(true) {
@@ -66,28 +73,65 @@ export function* signUpSaga() {
         type: SIGN_UP_SUCCESS,
         payload: { user }
       })
-    } catch(error) {
-      yield put({
-        type: SIGN_UP_ERROR,
-        error
-      })
+
+      yield put(replace('/'))
+
+    } catch(_) {
+      yield put({type: SIGN_UP_ERROR})
+      yield put(replace('/auth'))
     }
 
   }
 }
 
 
-firebase.auth().onAuthStateChanged( user => {
-  store.dispatch({
-    type: SIGN_IN_SUCCESS,
-    payload: { user }
-  })
+export const onAuthChangedSaga = function* () {
+  const auth = firebase.auth();
+
+  try {
+    yield cps([auth, auth.onAuthStateChanged])
+
+  } catch(user) {   
+    yield put({
+      type: SIGN_IN_SUCCESS,
+      payload: { user }
+    })
+  }
+}
+
+
+export const signOut = (_) => ({
+  type: SIGN_OUT_REQUEST
 })
 
+export const signOutSaga = function* () {
+  const auth = firebase.auth();
+
+  try {
+    yield call([auth, auth.signOut]);
+    yield put({
+      type: SIGN_OUT_SUCCESS
+    })
+
+    yield put(replace('/auth'));
+
+  } catch(error) {
+    yield put({
+      type: SIGN_OUT_ERROR,
+      error
+    })
+
+    yield put(replace('/auth'));
+  }
+}
 
 
-export function* saga() {
+
+
+export const saga = function* () {
   yield all([
-    signUpSaga()
+    signUpSaga(),
+    onAuthChangedSaga(),
+    takeEvery(SIGN_OUT_REQUEST, signOutSaga)
   ]);
 }
