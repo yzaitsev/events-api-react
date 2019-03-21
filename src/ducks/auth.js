@@ -1,20 +1,25 @@
 import firebase, { appName } from '../config';
 import { Record } from 'immutable';
-import { push, replace } from 'connected-react-router';
+import { replace } from 'connected-react-router';
 import { all, take, call, put, cps, takeEvery } from 'redux-saga/effects';
 
 
 // Module name
 export const moduleName = 'auth';
+export const prefix = `${appName}/${moduleName}`;
 
 // Actions types
-export const SIGN_UP_REQUEST = `${appName}/${moduleName}/SIGN_UP_REQUEST`;
-export const SIGN_UP_SUCCESS = `${appName}/${moduleName}/SIGN_UP_SUCCESS`;
-export const SIGN_IN_SUCCESS = `${appName}/${moduleName}/SIGN_IN_SUCCESS`;
-export const SIGN_UP_ERROR = `${appName}/${moduleName}/SIGN_UP_ERROR`;
-export const SIGN_OUT_REQUEST = `${appName}/${moduleName}/SIGN_OUT_REQUEST`;
-export const SIGN_OUT_SUCCESS = `${appName}/${moduleName}/SIGN_OUT_SUCCESS`;
-export const SIGN_OUT_ERROR = `${appName}/${moduleName}/SIGN_OUT_ERROR`;
+export const SIGN_UP_REQUEST = `${prefix}/SIGN_UP_REQUEST`;
+export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`;
+
+export const SIGN_IN_REQUEST = `${prefix}/SIGN_IN_REQUEST`;
+export const SIGN_IN_SUCCESS = `${prefix}/SIGN_IN_SUCCESS`;
+export const SIGN_IN_ERROR = `${prefix}/SIGN_IN_ERROR`;
+
+export const SIGN_UP_ERROR = `${prefix}/SIGN_UP_ERROR`;
+export const SIGN_OUT_REQUEST = `${prefix}/SIGN_OUT_REQUEST`;
+export const SIGN_OUT_SUCCESS = `${prefix}/SIGN_OUT_SUCCESS`;
+export const SIGN_OUT_ERROR = `${prefix}/SIGN_OUT_ERROR`;
 
 
 const ReducerSchema = Record({
@@ -30,22 +35,24 @@ export default function reducer(state = new ReducerSchema(), action) {
 
   switch(type) {
     case SIGN_UP_REQUEST:
-      return state.set('loading', true);
+    case SIGN_IN_REQUEST:
+        return state.set('loading', true)
 
-    case SIGN_UP_SUCCESS:
+    case SIGN_IN_SUCCESS:
       return state.set('loading', false)
                   .set('user', payload.user )
                   .set('error', null);
 
+    case SIGN_IN_ERROR:
     case SIGN_UP_ERROR:
       return state.set('loading', false)
-                  .set('error', error)
+                  .set('error', error);
 
+    case SIGN_OUT_ERROR:
     case SIGN_OUT_SUCCESS:
       return new ReducerSchema();
 
-    case SIGN_OUT_ERROR:
-      return new ReducerSchema();
+
 
     default:
       return state;
@@ -70,7 +77,7 @@ export const signUpSaga = function* () {
     try {
       const user = yield call([auth,auth.createUserWithEmailAndPassword], email, password);
       yield put({
-        type: SIGN_UP_SUCCESS,
+        type: SIGN_IN_SUCCESS,
         payload: { user }
       })
 
@@ -80,23 +87,36 @@ export const signUpSaga = function* () {
       yield put({type: SIGN_UP_ERROR})
       yield put(replace('/auth'))
     }
-
   }
 }
 
 
-export const onAuthChangedSaga = function* () {
-  const auth = firebase.auth();
-
-  try {
-    yield cps([auth, auth.onAuthStateChanged])
-
-  } catch(user) {   
-    yield put({
-      type: SIGN_IN_SUCCESS,
-      payload: { user }
-    })
+export function signIn(email, password) {
+  return {
+    type: SIGN_IN_REQUEST,
+    payload: { email, password }
   }
+}
+
+export function* signInSaga() {
+  const auth = firebase.auth();
+  
+  while(true) {
+    const { payload: {email, password} } = yield take(SIGN_IN_REQUEST);
+
+    try {
+      yield call([auth, auth.signInWithEmailAndPassword], email, password);
+      yield call(onAuthChangedSaga);
+      yield put(replace('/'));
+    } catch(error) {
+      yield put({
+        type: SIGN_IN_ERROR,
+        error
+      })
+    }
+
+  }
+
 }
 
 
@@ -126,12 +146,28 @@ export const signOutSaga = function* () {
 }
 
 
+export const onAuthChangedSaga = function* () {
+  const auth = firebase.auth();
+
+  try {
+    console.log(`------------------- onAuthChangedSaga called`)
+    yield cps([auth, auth.onAuthStateChanged])
+
+  } catch(user) {   
+    yield put({
+      type: SIGN_IN_SUCCESS,
+      payload: { user }
+    })
+  }
+}
+
 
 
 export const saga = function* () {
   yield all([
+    signInSaga(),
     signUpSaga(),
     onAuthChangedSaga(),
-    takeEvery(SIGN_OUT_REQUEST, signOutSaga)
+    takeEvery(SIGN_OUT_REQUEST, signOutSaga),
   ]);
 }

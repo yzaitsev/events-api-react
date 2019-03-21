@@ -1,7 +1,6 @@
 import React from 'react';
 
 const ErrorField = (props) => {
-  console.log(`ErrorField props: `, props);
   const { input, type, meta: {error, touched} } = props;
   const errorText = touched && error && <div style={{ color: 'red' }}>{error}</div>
 
