@@ -2,6 +2,8 @@ import { appName } from '../config';
 import { Record as SchemaRecord, List } from 'immutable';
 // saga effects
 import { put, call, takeEvery } from 'redux-saga/effects';
+// redux form
+import { reset } from 'redux-form';
 // utils
 import { generateId } from './utils';
 
@@ -55,7 +57,9 @@ export const addPersonSaga = function* (action) {
   yield put({
     type: ADD_PERSON,
     payload: { ...action.payload, id }
-  })
+  });
+
+  yield put(reset('person'));
 }
 
 export const saga = function* () {

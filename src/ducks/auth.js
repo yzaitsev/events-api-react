@@ -22,7 +22,7 @@ export const SIGN_OUT_SUCCESS = `${prefix}/SIGN_OUT_SUCCESS`;
 export const SIGN_OUT_ERROR = `${prefix}/SIGN_OUT_ERROR`;
 
 
-const ReducerSchema = Record({
+export const ReducerSchema = Record({
   user: null,
   error: null,
   loading: false,
@@ -150,7 +150,6 @@ export const onAuthChangedSaga = function* () {
   const auth = firebase.auth();
 
   try {
-    console.log(`------------------- onAuthChangedSaga called`)
     yield cps([auth, auth.onAuthStateChanged])
 
   } catch(user) {   
@@ -171,3 +170,4 @@ export const saga = function* () {
     takeEvery(SIGN_OUT_REQUEST, signOutSaga),
   ]);
 }
+
