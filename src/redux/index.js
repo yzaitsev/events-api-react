@@ -8,13 +8,11 @@ import history from '../history';
 // main rootSaga watchers
 import rootSaga from './saga';
 
-
-
 // create the saga middleware
 const sagaMiddleware = createSagaMiddleware();
-const enhance = applyMiddleware(sagaMiddleware, routerMiddleware(history), logger)
+const enhancer = applyMiddleware(routerMiddleware(history), sagaMiddleware, logger);
 
-const store = createStore(rootReducer(history), {}, enhance);
+const store = createStore(rootReducer, {}, enhancer);
 
 // dev only!!!
 window.store = store;

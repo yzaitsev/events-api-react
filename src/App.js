@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
-import store from './redux/store';
+import store from './redux';
 import history from './history';
 import './config';
 import Root from './components/Root';
+import './mocks';
 
 
 class App extends Component {
