@@ -3,6 +3,7 @@ import { all, take, call, put } from 'redux-saga/effects';
 import { appName } from '../config';
 import { Record, OrderedMap } from 'immutable';
 import { createSelector } from 'reselect';
+import { fbDatatoEntities } from './utils';
 
 
 /**
@@ -21,6 +22,17 @@ export const ReducerRecord = new Record({
   entities: new OrderedMap({}),
   loading: false,
   loaded: false
+});
+
+
+export const EventRecodr = new Record({
+  uid: null,
+  title: null,
+  url: null,
+  where: null,
+  when: null,
+  month: null,
+  submissionDeadline:null
 })
 
 export default function reducer(state = new ReducerRecord(), action) {
@@ -34,7 +46,7 @@ export default function reducer(state = new ReducerRecord(), action) {
       return state
               .set('loading', false)
               .set('loaded', true)
-              .set('entities', new OrderedMap(payload))
+              .set('entities', fbDatatoEntities(payload, EventRecodr))
 
     default:
       return state;
