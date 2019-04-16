@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import EventList from '../events/events-list';
+import EventList from '../events/events-table-virtualized';
 
 
 

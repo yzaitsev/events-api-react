@@ -1,18 +1,18 @@
+import firebase from 'firebase'
 import { appName } from '../config';
 import { Record as SchemaRecord, List } from 'immutable';
 // saga effects
 import { put, call, takeEvery } from 'redux-saga/effects';
 // redux form
 import { reset } from 'redux-form';
-// utils
-import { generateId } from './utils';
+
 
 const ReducerState = SchemaRecord({
   entities: new List()
 })
 
 const PersonRecord = SchemaRecord({
-  id: null,
+  uid: null,
   firstname: null,
   lastname: null,
   email: null
@@ -24,8 +24,8 @@ const prefix = `${appName}/${moduleName}`;
 
 
 // Actions Constants Types
-export const ADD_PERSON = `${prefix}/ADD_PERSON`;
 export const ADD_PERSON_REQUEST = `${prefix}/ADD_PERSON_REQUEST`;
+export const ADD_PERSON_SUCCESS = `${prefix}/ADD_PERSON_SUCCESS`;
 
 
 
@@ -34,7 +34,7 @@ export default function reducer(state = new ReducerState(), action) {
   const { type, payload } = action;
 
   switch(type) {
-    case ADD_PERSON: 
+    case ADD_PERSON_SUCCESS: 
       return state.update('entities', entities => entities.push(new PersonRecord(payload)))
 
     default:
@@ -44,6 +44,7 @@ export default function reducer(state = new ReducerState(), action) {
 
 // Action creator
 export function addPerson(person) {
+  console.log(`--- person: `, person)
   return {
     type: ADD_PERSON_REQUEST,
     payload: person
@@ -52,14 +53,18 @@ export function addPerson(person) {
 
 // Saga generator function hundler
 export const addPersonSaga = function* (action) {
-  const id = yield call(generateId);
+  const peopleRef = firebase.database().ref('/people');
+  try {
+    const ref = yield call([peopleRef, peopleRef.push], action.payload);
+    yield put({
+      type: ADD_PERSON_SUCCESS,
+      payload: { ...action.payload, uid: ref.key }
+    });
 
-  yield put({
-    type: ADD_PERSON,
-    payload: { ...action.payload, id }
-  });
-
-  yield put(reset('person'));
+    yield put(reset('person'));
+  } catch(err) {
+    console.log(`----err: `, err)
+  } 
 }
 
 export const saga = function* () {
