@@ -8,7 +8,7 @@ import { moduleName, signOut } from '../ducks/auth';
 // route components 
 import AdminPage from './routes/AdminPage';
 import AuthPage from './routes/AuthPage';
-import PersonPage from './routes/PersonPage';
+import PeoplePage from './routes/PeoplePage';
 import EventsPage from './routes/EventsPage';
 import ProtectedRoute from './common/ProtectedRoute';
 
@@ -35,7 +35,7 @@ class Root extends Component {
       <div>
         { btnLogOut }
         <ProtectedRoute path='/admin' component={AdminPage} />
-        <ProtectedRoute path='/people' component={PersonPage} />
+        <ProtectedRoute path='/people' component={PeoplePage} />
         <ProtectedRoute path='/events' component={EventsPage} />
         <Route path='/auth' component={AuthPage} />
       </div>

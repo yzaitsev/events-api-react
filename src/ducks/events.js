@@ -43,7 +43,6 @@ export const EventRecord = new Record({
 
 export default function reducer(state = new ReducerRecord(), action) {
   const { type, payload } = action;
-  console.log(`----- in reducer`)
   switch(type) {
 
     case FETCH_ALL_REQUEST:

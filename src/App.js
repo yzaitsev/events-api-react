@@ -6,7 +6,7 @@ import history from './history';
 import './config';
 import Root from './components/Root';
 import './mocks';
-
+import 'react-virtualized/styles.css';
 
 class App extends Component {
   
