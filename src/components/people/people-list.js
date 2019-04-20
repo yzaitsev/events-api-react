@@ -1,55 +1,45 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { List } from 'react-virtualized';
 import { fetchAll, peopleListSelector } from '../../ducks/people';
-import { Column, Table } from 'react-virtualized';
+import PeopleCard from './people-card';
+
 
 
 class PeopleList extends Component {
-
+  
   componentDidMount() {
-    this.props.fetchAll()
+    this.props.fetchAll && this.props.fetchAll();
+  }
+
+  rowRender = (data) => {
+    return <PeopleCard key={data.key} person={this.props.peopleList[data.index]} style={data.style} />
   }
 
 
-  rowGetter = ({index}) => this.props.peopleList[index]
-
   render() {
-    console.log(`---- peopel list: `, this.props.peopleList)
     const { peopleList } = this.props;
+
     return (
       <div>
-        <h3>Table of people</h3>
-        <Table
-          headerHeight={50}
-          headerStyle={{borderBottom: `1px solid grey`}}
-          height={300}
-          rowCount={this.props.peopleList.length}
-          rowHeight={50}
-          width={600}
-          rowGetter={this.rowGetter}
-          overscanRowCount={2}
+        People List
+        <hr />
+        <List
+          height={210}
+          width={200}
+          rowCount={peopleList.length}
+          rowHeight={70}
+          rowRenderer={this.rowRender}	
         >
-        <Column 
-          label='First name'
-          dataKey='firstname' 
-          width={200} 
-        />
-        <Column 
-          label='Last name'
-          dataKey='lastname' 
-          width={200} 
-        />
-        <Column 
-          label='Email'
-          dataKey='email' 
-          width={200} 
-        />
-        </Table>
+        </List>
       </div>
     );
   }
 }
 
+
+
+
 export default connect(state => ({
   peopleList: peopleListSelector(state)
-}), {fetchAll})(PeopleList);
+}), { fetchAll })(PeopleList);

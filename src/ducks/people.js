@@ -42,7 +42,7 @@ export default function reducer(state = new ReducerState(), action) {
 
   switch(type) {
     case ADD_PERSON_SUCCESS: 
-      return state.seIn(['entities', payload.uid], PersonRecord(payload))
+      return state.setIn(['entities', payload.uid], PersonRecord(payload))
 
     case FETCH_ALL_SUCCESS:
       return state.set('entities', fbDatatoEntities(payload, PersonRecord))
@@ -104,6 +104,7 @@ export const fetchAllSaga = function* (action) {
   
   try {
     const data = yield call([peopleRef, peopleRef.once], 'value');
+    console.log(`----1111 --- from fb:`, data.val())
     yield put({
       type: FETCH_ALL_SUCCESS,
       payload: data.val()
