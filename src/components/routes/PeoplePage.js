@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { addPerson } from '../../ducks/people';
 import NewPersonForm from '../people/NewPersonForm';
-import PeopleList from '../people/people-table';
+import PeopleTable from '../people/people-table';
 
 
 
@@ -12,7 +12,7 @@ class PeoplePage extends Component {
   render() {
     return (
       <div>
-        <PeopleList />
+        <PeopleTable />
         <br />
         <NewPersonForm onSubmit={ this.props.addPerson } />
       </div>

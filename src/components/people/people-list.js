@@ -22,8 +22,7 @@ class PeopleList extends Component {
 
     return (
       <div>
-        People List
-        <hr />
+        <h3>People List</h3>
         <List
           height={210}
           width={200}
@@ -32,6 +31,7 @@ class PeopleList extends Component {
           rowRenderer={this.rowRender}	
         >
         </List>
+        <hr />
       </div>
     );
   }

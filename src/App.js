@@ -7,6 +7,8 @@ import './config';
 import Root from './components/Root';
 import './mocks';
 import 'react-virtualized/styles.css';
+import { DragDropContextProvider } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 class App extends Component {
   
@@ -15,7 +17,9 @@ class App extends Component {
     return (
       <Provider store={store}>
         <ConnectedRouter history={history}>
-          <Root />
+          <DragDropContextProvider backend={HTML5Backend}>
+            <Root />
+          </DragDropContextProvider>
         </ConnectedRouter>
       </Provider>
 

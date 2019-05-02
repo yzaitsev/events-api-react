@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PeopleList from '../people/people-list';
+import SelectedEvents from '../events/selected-events';
+import EventsTable from '../events/events-table-virtualized';
 
 
 class AdminPage extends Component {
@@ -8,7 +10,9 @@ class AdminPage extends Component {
     return (
       <div>
         <h1>Admin page</h1>
-        <PeopleList />      
+        <SelectedEvents />
+        <PeopleList />
+        <EventsTable />      
       </div>
     );
   }

@@ -51,15 +51,15 @@ export default function reducer(state = new ReducerRecord(), action) {
 
     case FETCH_ALL_SUCCESS:
       return state
-              .set('loading', false)
-              .set('loaded', true)
-              .set('entities', fbDatatoEntities(payload, EventRecord))
+        .set('loading', false)
+        .set('loaded', true)
+        .set('entities', fbDatatoEntities(payload, EventRecord))
 
     case FETCH_LAZY_SUCCESS:
       return state
-          .set('loading', false)
-          .mergeIn(['entities'], fbDatatoEntities(payload, EventRecord))
-          .set('loaded', Object.keys(payload).length < 10)
+        .set('loading', false)
+        .mergeIn(['entities'], fbDatatoEntities(payload, EventRecord))
+        .set('loaded', Object.keys(payload).length < 10)
 
 
     case SELECT_EVENT:
@@ -80,7 +80,14 @@ export const stateSelector = state => state[moduleName];
 export const entitiesSelector = createSelector(stateSelector, state => state.entities);
 export const eventListSelector = createSelector(entitiesSelector, entities => (
   entities.valueSeq().toArray()
-)) 
+))
+export const sectionSelector = createSelector(stateSelector, state => state.selected)
+export const selectedEventsSelector = createSelector(
+  entitiesSelector,
+  sectionSelector,
+  (entities, selected) => selected.toArray().map((uid) => entities.get(uid))
+)
+
 
 /**
  * Action Creators
