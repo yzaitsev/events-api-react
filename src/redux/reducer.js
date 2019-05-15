@@ -6,6 +6,7 @@ import { reducer as form } from 'redux-form';
 import authReducer, { moduleName as authModule } from '../ducks/auth';
 import peopleReducer, { moduleName as peopleModule } from '../ducks/people';
 import eventReducer, { moduleName as eventsModule } from '../ducks/events';
+import channelReducer, { moduleName as channelModule } from '../ducks/channel';
 
 export default combineReducers({
   router: connectRouter(history),
@@ -13,5 +14,6 @@ export default combineReducers({
   // custom reducers
   [authModule] : authReducer,
   [peopleModule] : peopleReducer,
-  [eventsModule] : eventReducer
+  [eventsModule] : eventReducer,
+  [channelModule]: channelReducer
 })

@@ -1,11 +1,16 @@
 import React, { Component } from 'react'
 import { DragSource } from 'react-dnd';
-
+import { getEmptyImage } from 'react-dnd-html5-backend'
 
 class PersonCard extends Component {
     static propTypes = {
 
     };
+
+    componentDidMount() {
+      this.props.connectDragPreview(getEmptyImage());
+    }
+
 
     render() {
         const {person, style, connectDragSource} = this.props
@@ -27,11 +32,19 @@ const spec = {
     return {
       uid: props.person.uid
     }
+  },
+  endDrag(props, monitor) {
+    const personUid = props.person && props.person.uid
+    const dropRes = monitor.getDropResult()
+    const eventUid = dropRes && dropRes.eventUid
+
+    console.log('---', 'endDrag', personUid, eventUid)
   }
 }
 
 const collect = (connect, monitor) => ({
   connectDragSource: connect.dragSource(),
+  connectDragPreview: connect.dragPreview(),
   isDragging: monitor.isDragging(),
 })
 

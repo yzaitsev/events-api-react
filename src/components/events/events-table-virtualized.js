@@ -4,6 +4,10 @@ import {moduleName, fetchLazy, selectEvent, eventListSelector} from '../../ducks
 import {Table, Column, InfiniteLoader} from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
+import Trash from './trash';
+import TableRow from './table-row';
+
+
 
 export class EventList extends Component {
     static propTypes = {
@@ -16,13 +20,15 @@ export class EventList extends Component {
         const {loaded, events} = this.props;
 
         return (
-            <InfiniteLoader
+            <>
+              <Trash />
+              <InfiniteLoader
                 isRowLoaded={this.isRowLoaded}
                 rowCount={loaded ? events.length : events.length + 1}
                 loadMoreRows={this.loadMoreRows}
-            >
-            {({onRowsRendered, registerChild}) =>
-                <Table
+              >
+                {({onRowsRendered, registerChild}) =>
+                  <Table
                     ref={registerChild}
                     rowCount={events.length}
                     rowGetter={this.rowGetter}
@@ -33,7 +39,8 @@ export class EventList extends Component {
                     height={300}
                     onRowClick={this.handleRowClick}
                     onRowsRendered={onRowsRendered}
-                >
+                    rowRenderer={this.rowRenderer}
+                  >
                     <Column
                         label="title"
                         dataKey="title"
@@ -49,16 +56,18 @@ export class EventList extends Component {
                         dataKey="month"
                         width={150}
                     />
-                </Table>
+                  </Table>
                 }
-            </InfiniteLoader>
+              </InfiniteLoader>
+            </>
         )
     }
+
+    rowRenderer = (rowCtx) => <TableRow { ...rowCtx } />
 
     isRowLoaded = ({ index }) => index < this.props.events.length
 
     loadMoreRows = () => {
-        console.log('---', 'load more')
         this.props.fetchLazy()
     }
 
