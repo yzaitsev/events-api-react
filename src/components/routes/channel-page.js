@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import BTNChannel from '../channel/btn-channel';
+import FileChannel from '../channel/file-channel';
 
 
 class ChannelPage extends Component {
@@ -7,6 +8,8 @@ class ChannelPage extends Component {
     return (
       <div>
         <BTNChannel />
+        <h2>Progress bar channel</h2>
+        <FileChannel />
       </div>
     );
   }

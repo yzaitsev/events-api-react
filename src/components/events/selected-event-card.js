@@ -13,7 +13,7 @@ class EventCard extends Component {
         const { connectDropTarget, canDrop, hovered, people } = this.props;
         const dropStyle = {
             border: `1px solid ${canDrop ? 'red' : 'black'}`,
-            backgroundColor: hovered ? 'green' : 'white'
+            // backgroundColor: hovered ? 'green' : 'white'
         }
 
         const peopleElement = people && (

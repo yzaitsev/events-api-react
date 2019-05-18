@@ -3,7 +3,7 @@ import { DropTarget } from 'react-dnd';
 import { connect } from 'react-redux';
 import {deleteEvent, stateSelector} from '../../ducks/events'
 import Loader from '../common/Loader'
-
+import {Motion, spring, presets} from 'react-motion'
 
 
 
@@ -20,14 +20,26 @@ class Trash extends Component {
         position: 'fixed',
         top: '10px', right: '10px'
     }
-    return connectDropTarget(
-      <div style={style}>
-        Trash
-        { loading && <Loader /> }
-      </div>
-    );
+    return <Motion
+      defaultStyle={{opacity: 0}} 
+      style={{
+        opacity: spring(1, {
+          damping: presets.noWobble.damping * 4,
+          stiffness: presets.noWobble.stiffness / 2
+        })}}
+      >
+        {interpolatingStyle => connectDropTarget(
+          <div style={{...style, ...interpolatingStyle}}>
+            Trash
+            { loading && <Loader /> }
+          </div>
+        )}
+      </Motion>
+      
   }
 }
+
+
 
 
 

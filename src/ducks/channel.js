@@ -1,6 +1,7 @@
 import axios from 'axios';
+import firebase from '../config';
 import { fork, spawn, take, put, call, cancel, cancelled } from 'redux-saga/effects';
-import { eventChannel, delay } from 'redux-saga';
+import { eventChannel } from 'redux-saga';
 
 import { appName } from '../config';
 
@@ -13,6 +14,10 @@ export const prefix = `${appName}/${moduleName}`;
 
 export const TIMEOUT_RUN = `${prefix}/TIMEOUT_RUN`;
 export const TIMEOUT_CANCEL = `${prefix}/TIMEOUT_CANCEL`;
+
+export const UPLOAD_FILE = `${prefix}/UPLOAD_FILE`;
+export const UPLOAD_FILE_SUCCESS = `${prefix}/UPLOAD_FILE_SUCCESS`;
+export const UPLOAD_FILE_ERROR = `${prefix}/UPLOAD_FILE_ERROR`;
 
 
 /**
@@ -37,9 +42,10 @@ export const TIMEOUT_CANCEL = `${prefix}/TIMEOUT_CANCEL`;
   * Actions
   */
 
-  export const timeoutRun = () => ({ type: TIMEOUT_RUN })
-  export const timeoutCancel = () => ({ type: TIMEOUT_CANCEL })
+export const timeoutRun = () => ({ type: TIMEOUT_RUN })
+export const timeoutCancel = () => ({ type: TIMEOUT_CANCEL })
 
+export const uploadFile = (file) => ({ type: UPLOAD_FILE, payload: file })
 
 
 
@@ -92,9 +98,12 @@ export const TIMEOUT_CANCEL = `${prefix}/TIMEOUT_CANCEL`;
     }
   }
 
+// ./ BTNChannels
 
 
 
-  export const saga = function* () {
-    yield spawn(btnChannelSaga);
-  }
+
+
+export const saga = function* () {
+  yield spawn(btnChannelSaga);
+}
